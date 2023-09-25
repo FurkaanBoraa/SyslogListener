@@ -13,7 +13,7 @@ PORT = 514
 def logtype(data):
     data = str(data)
     if "filter" not in data:
-        f.write(data)
+        f.write(data + "\n")
 
 #Open a File
 
