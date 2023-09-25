@@ -13,12 +13,15 @@ PORT = 514
 def logtype(data):
     data = str(data)
     if "filter" not in data:
-        print(data)
+        f.write(data)
 
+#Open a File
+
+f = open("logexamples.txt", "a+")
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    #Socket Connection
     s.bind((HOST, PORT))    
     print(f"{HOST} listening on port {PORT}")
     
     while True:
         data = s.recv(512)
-        logtype(data)
+        logtype
