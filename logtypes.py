@@ -24,4 +24,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    #Socket Connectio
     
     while True:
         data = s.recv(512)
-        logtype
+        logtype(data)
