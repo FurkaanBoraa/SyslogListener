@@ -6,6 +6,7 @@
 #IMPORTS
 import socket
 import sys
+import re
 
 #Global Constants
 HOST = '0.0.0.0'
@@ -17,22 +18,28 @@ PORT = 514
 def logtype(data):
     data = str(data)
     if "filter" in data:
-        return "Filter Log"
+        return 0                #Filter Logs
     elif "dhcp" in data:
-        return "DHCP Log"
+        return 1                #DHCP Logs
+
+#Decode bits to str and delete <number>
+def logdecoder(data):
+    log = data.decode('utf-8')
+    numbers = "^<.+>"
+    log = re.sub(numbers, "", log)
+    return logdate(log)
+
+def logdate(data):
+    month = data[:16]
+
+    return month
 
 
-def logparser(data):
-    data = str(data).split(",")
-    return data
-
-
-with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    #Socket Connection
+#Socket Connection
+with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    
     s.bind((HOST, PORT))    
     print(f"{HOST} listening on port {PORT}")
 
-
-
     while True:
         data = s.recv(512) #Receive data max size 512
-        logtype(data)
+        print(logdecoder(data))
