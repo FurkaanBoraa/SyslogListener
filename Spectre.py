@@ -27,12 +27,13 @@ def logdecoder(data):
     log = data.decode('utf-8')
     numbers = "^<.+>"
     log = re.sub(numbers, "", log)
-    return logdate(log)
+    return logdatetime(log)
 
-def logdate(data):
-    month = data[:16]
 
-    return month
+##Parses datetime stampse
+def logdatetime(data):
+    datetime = data[:16]
+    return datetime
 
 
 #Socket Connection
