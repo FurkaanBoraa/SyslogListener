@@ -17,24 +17,38 @@ PORT = 514
 #Functions
 def logtype(data):
     data = str(data)
-    if "filter" in data:
-        return 0                #Filter Logs
-    elif "dhcp" in data:
-        return 1                #DHCP Logs
+    if "filter" in data:          #Filter Logs
+        return 'f'                
+    elif "dhcp" in data:          #DHCP Logs
+        if 'ACK' in data:
+            return 'da'
+        elif 'REQUEST' in data:
+            return 'dr'
+        elif 'DISCOVER' in data:
+            return 'dd'
+        elif 'OFFER' in data:
+            return 'do'
+        elif 'REQUEST' in data:
+            return 'dr'
 
 #Decode bits to str and delete <number>
 def logdecoder(data):
     log = data.decode('utf-8')
+    log = log.lower()
     numbers = "^<.+>"
     log = re.sub(numbers, "", log)
-    return logdatetime(log)
+    return log
 
 
-##Parses datetime stampse
+##Parses datetime stamps
 def logdatetime(data):
     datetime = data[:16]
     return datetime
 
+def logger(data):
+    log = logdecoder(data)
+    datetime = logdatetime(log)
+    
 
 #Socket Connection
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    
