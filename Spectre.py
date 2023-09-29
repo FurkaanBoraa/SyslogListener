@@ -7,54 +7,55 @@
 import socket
 import sys
 import re
+import time
+import datetime
+
+# TEST SECTION
+f = open("logexamples.txt", "a+")
+
 
 #Global Constants
 HOST = '0.0.0.0'
 PORT = 514
-
-
+NUMBERS = re.compile("^<.+>") 
 
 #Functions
-def logtype(data):
-    data = str(data)
-    if "filter" in data:          #Filter Logs
-        return 'f'                
-    elif "dhcp" in data:          #DHCP Logs
-        if 'ACK' in data:
-            return 'da'
-        elif 'REQUEST' in data:
-            return 'dr'
-        elif 'DISCOVER' in data:
-            return 'dd'
-        elif 'OFFER' in data:
-            return 'do'
-        elif 'REQUEST' in data:
-            return 'dr'
-
-#Decode bits to str and delete <number>
-def logdecoder(data):
-    log = data.decode('utf-8')
-    log = log.lower()
-    numbers = "^<.+>"
-    log = re.sub(numbers, "", log)
+def logdecoder(log):                    # Decode logs from bit to str 
+    log = log.decode('utf-8')
     return log
 
+def logremovenumbers(log):              # Remove numbers in between angle brackets 
+    log = re.sub(NUMBERS, "", log)
+    return log
 
-##Parses datetime stamps
-def logdatetime(data):
-    datetime = data[:16]
-    return datetime
+def lowercase(log):                     # Lowercase given log
+    return log.lower()
 
-def logger(data):
-    log = logdecoder(data)
-    datetime = logdatetime(log)
-    
+def logtype(log):                       # Classification of logs respect to their type 
+    types = ["dhcp", "filter"]
+    for type in types:
+        if type in log:
+            return type    
+    return None
 
+
+def logger(log):                        # Goes through all functions for each log
+    log = logdecoder(log)
+    log = logremovenumbers(log)
+    log = lowercase(log)
+    typeoflog = logtype(log)
+        # if typeoflog is not None:
+        #     print(typeoflog, log)
+        # else:
+        #     f.write("This log type is not classified!", log)
+    if typeoflog is None:
+        print("This log type is not classified!", log)   
 #Socket Connection
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    
+    starttime = datetime.datetime.now().strftime("%d/%m/%Y, %H:%M")
     s.bind((HOST, PORT))    
-    print(f"{HOST} listening on port {PORT}")
+    print(f"{HOST} started listening on port {PORT} at {starttime}")
 
     while True:
-        data = s.recv(512) #Receive data max size 512
-        print(logdecoder(data))
+        log = s.recv(512)           #Receive log max size 512
+        logger(log)
