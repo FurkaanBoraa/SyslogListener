@@ -49,7 +49,7 @@ def logger(log):                        # Goes through all functions for each lo
         # else:
         #     f.write("This log type is not classified!", log)
     if typeoflog is None:
-        print("This log type is not classified!", log)   
+        f.write("This log type is not classified!", log)   
 #Socket Connection
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    
     starttime = datetime.datetime.now().strftime("%d/%m/%Y, %H:%M")
