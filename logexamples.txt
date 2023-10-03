@@ -1,0 +1,12 @@
+oct  2 11:41:00 /usr/sbin/cron[54607]: (root) cmd (/usr/local/pkg/servicewatchdog_cron.php)
+oct  2 11:41:00 /usr/sbin/cron[54687]: (root) cmd (/usr/sbin/newsyslog)
+oct  2 11:41:27 nginx: 192.168.254.182 - - [02/oct/2023:11:41:27 +0300] "get / http/1.1" 200 367 "-" "dalvik/2.1.0 (linux; u; android 13; cph2205 build/tp1a.220905.001)"
+oct  2 11:42:00 /usr/sbin/cron[85300]: (root) cmd (/usr/local/pkg/servicewatchdog_cron.php)
+oct  2 11:42:00 /usr/sbin/cron[85348]: (root) cmd (/usr/sbin/newsyslog)
+oct  2 11:42:00 syslogd: restart
+oct  2 11:43:00 /usr/sbin/cron[23126]: (root) cmd (/usr/sbin/newsyslog)
+oct  2 11:43:00 /usr/sbin/cron[23096]: (root) cmd (/usr/local/pkg/servicewatchdog_cron.php)
+oct  2 11:43:53 nginx: 2023/10/02 11:43:53 [error] 83216#100522: send() failed (54: connection reset by peer)
+oct  2 11:43:53 nginx: 2023/10/02 11:43:53 [error] 83216#100522: send() failed (54: connection reset by peer)
+oct  2 11:44:00 /usr/sbin/cron[60686]: (root) cmd (/usr/local/pkg/servicewatchdog_cron.php)
+oct  2 11:44:00 /usr/sbin/cron[60769]: (root) cmd (/usr/sbin/newsyslog)
