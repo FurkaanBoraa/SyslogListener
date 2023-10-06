@@ -11,7 +11,7 @@ import time
 import datetime
 
 # TEST SECTION
-
+f = open("logexample.txt", "a+")
 
 #Global Constants
 HOST = '0.0.0.0'
@@ -32,7 +32,7 @@ def lowercase(log):                     # Lowercase given log
     return log.lower()
 
 def logtype(log):                       # Classification of logs respect to their type 
-    types = ["dhcp", "filter"]
+    types = ["filterdns", "dhcp", "filter"]
     for type in types:
         if type in log:
             return type    
@@ -65,7 +65,7 @@ def filterparser(log):
         "action" : splitlog[6],
         "direction" : splitlog[7],
         }
-    if splitlog[8] == 4:
+    if splitlog[8] == "4":
         ipv4 = {                         # If log has IPv4 info
             "iptype" : splitlog[8],
             "tos" : splitlog[9],
@@ -76,8 +76,25 @@ def filterparser(log):
             "flags" : splitlog[14],
             "protocolid" : splitlog[15],
             "protocol" : splitlog[16],
+            "length" : splitlog[17],
+            "source": splitlog[18],
+            "destination" : splitlog[19]
         }
-    return splitlog
+        meaningfullog.update(ipv4)
+    elif splitlog[8] == "6":
+        ipv6 = {                         # If log has IPv4 info
+            "iptype" : splitlog[8],
+            "class" : splitlog[9],
+            "flow label" : splitlog[10],
+            "hop limit" : splitlog[11],
+            "protocol text" : splitlog[12],
+            "protocol id" : splitlog[13],
+            "length" : splitlog[14],
+            "source": splitlog[15],
+            "destination" : splitlog[16]
+        }
+        meaningfullog.update(ipv6)
+    return meaningfullog
 
 def logger(log):                        # Goes through all functions for each log
     log = logdecoder(log)
@@ -90,7 +107,7 @@ def logger(log):                        # Goes through all functions for each lo
         log = striptype(log)
         if typeoflog is "filter":   
             log = filterparser(log)         
-        print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
+            print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
     else:
         print("HELP")
 
@@ -103,4 +120,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     while True:
         log = s.recv(512)           #Receive log max size 512
         logger(log)
-
+        
