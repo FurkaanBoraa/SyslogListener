@@ -16,7 +16,7 @@ f = open("logexample.txt", "a+")
 #Global Constants
 HOST = '0.0.0.0'
 PORT = 514
-NUMBERS = re.compile("^<.+>") 
+NUMBERS = re.compile("^<.+>")
 LOGTYPES = re.compile("^f.*\[.*]:")
 
 #Functions
@@ -32,8 +32,9 @@ def lowercase(log):                     # Lowercase given log
     return log.lower()
 
 def logtype(log):                       # Classification of logs respect to their type 
-    types = ["filterdns", "dhcp", "filter"]
-    for type in types:
+    wantedtypes = ["filterdns", "dhcp", "filter"]
+    unwantedtypes = ["nginx", "snort"]
+    for type in wantedtypes:
         if type in log:
             return type    
     return None
@@ -109,7 +110,7 @@ def logger(log):                        # Goes through all functions for each lo
             log = filterparser(log)         
             print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
     else:
-        print("HELP")
+        f.write(f"{log}\n")
 
 #Socket Connection
 with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:    
