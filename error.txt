@@ -1,9 +1,0 @@
-strptime() argument 1 must be str, not list
-['dec  7 11:53:19 dhcpd[96200]: dhcpack on 192.168.254.182 to c6:09:7b:49:8e:e8 (furkan) via em0']
-
-strptime() argument 1 must be str, not list
-['dec  7 11:53:19 dhcpd[96200]: dhcpack on 192.168.254.182 to c6:09:7b:49:8e:e8 (furkan) via em0']
-
-strptime() argument 1 must be str, not list
-['dec  7 11:53:19 dhcpd[96200]: dhcpack on 192.168.254.182 to c6:09:7b:49:8e:e8 (furkan) via em0']
-

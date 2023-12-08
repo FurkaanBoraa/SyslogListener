@@ -36,7 +36,7 @@ def lowercase(log):                     # Lowercase given log
     return log.lower()
 
 def logtype(log):                       # Classification of logs respect to their type 
-    wantedtypes = ["filterdns","dhcpack", "filter"]
+    wantedtypes = ["filterdns", "dhcp", "filter"]
     #unwantedtypes = ["nginx", "snort"]
     for type in wantedtypes:
         if type in log:
@@ -59,12 +59,11 @@ def striptype(log):                     # Strip type in log (filterlog[45684], d
     return striplog
 
 def dhcpparser(log):
-    ip = re.search(IP, log)
-    mac = re.search(MAC, log)
+    ip = re.match(IP, log)
+    mac = re.match(MAC, log)
     #host = re.match(HOSTNAME, log)
-    return {"ip": ip.group(),
-            "mac" : mac.group()
-    }
+    return ip, mac
+
 def filterparser(log):
     splitlog = log.split(",")
     meaningfullog = {                   # Every filter log has same start info
@@ -109,19 +108,19 @@ def filterparser(log):
     return meaningfullog
 
 def logger(log):                        # Goes through all functions for each log
-    log = logdecoder(log)
-    log = logremovenumbers(log)
-    log = lowercase(log)
+    #log = logdecoder(log)
+    #log = logremovenumbers(log)
+    #log = lowercase(log)
     typeoflog = logtype(log)
     print(typeoflog)
     if typeoflog is not None:
         date_time = formatdate(log)
         log = stripdate(log)
         log = striptype(log)
-        # if typeoflog == "filter":   
-        #     log = filterparser(log)         
-        #     print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
-        if typeoflog == "dhcpack":   
+        if typeoflog == "filter":   
+            log = filterparser(log)         
+            print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
+        elif typeoflog == "dhcp":   
             log = dhcpparser(log)         
             print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
         
@@ -135,10 +134,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     print(f"{HOST} started listening on port {PORT} at {starttime}")
     
     while True:
-        log = s.recv(512)           #Receive log max size 512
+        log = "dhcpack 192.168.254.3 05:15:af:12:ba:12"        #Receive log max size 512
         try:
             logger(log)
         except BaseException as err:
             er.write(f"{err}\n{log}\n\n")
+        time.sleep(3)
 
 
