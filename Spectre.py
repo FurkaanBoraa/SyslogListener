@@ -12,12 +12,15 @@ import datetime
 
 # TEST SECTION
 f = open("logexample.txt", "a+")
+er = open("error.txt", "a+")
+
 
 #Global Constants
 HOST = '0.0.0.0'
 PORT = 514
 NUMBERS = re.compile("^<.+>")
 LOGTYPES = re.compile("^f.*\[.*]:")
+IP = re.compile("dhcpack on (?P<ip>\d+\.\d+\.\d+\.\d+) to (?P<mac>[a-f0-9:]+) \((?P<host>\w+)\)")
 
 #Functions
 def logdecoder(log):                    # Decode logs from bit to str 
@@ -32,8 +35,8 @@ def lowercase(log):                     # Lowercase given log
     return log.lower()
 
 def logtype(log):                       # Classification of logs respect to their type 
-    wantedtypes = ["filterdns", "dhcp", "filter"]
-    unwantedtypes = ["nginx", "snort"]
+    wantedtypes = ["filterdns","dhcpack", "filter"]
+    #unwantedtypes = ["nginx", "snort"]
     for type in wantedtypes:
         if type in log:
             return type    
@@ -53,6 +56,10 @@ def stripdate(log):                     #Strip the date since we already get it 
 def striptype(log):                     # Strip type in log (filterlog[45684], dhcp[6546] etc.) since we get it at first
     striplog = re.sub(LOGTYPES,"", log)
     return striplog
+
+def dhcpparser(log):
+    ip = re.match(IP, log)
+    return ip
 
 def filterparser(log):
     splitlog = log.split(",")
@@ -102,14 +109,19 @@ def logger(log):                        # Goes through all functions for each lo
     log = logremovenumbers(log)
     log = lowercase(log)
     typeoflog = logtype(log)
+    print(typeoflog)
     if typeoflog is not None:
         date_time = formatdate(log)
         log = stripdate(log)
         log = striptype(log)
-        if typeoflog is "filter":   
+        if typeoflog == "filter":   
             log = filterparser(log)         
             print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
-    else:
+        if typeoflog == "dhcp":   
+            log = dhcpparser(log)         
+            print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
+        
+    elif "nginx" not in log:
         f.write(f"{log}\n")
 
 #Socket Connection
@@ -117,8 +129,13 @@ with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
     starttime = datetime.datetime.now().strftime("%d/%m/%Y, %H:%M")
     s.bind((HOST, PORT))    
     print(f"{HOST} started listening on port {PORT} at {starttime}")
-
+    
     while True:
         log = s.recv(512)           #Receive log max size 512
-        logger(log)
-        
+        try:
+            logger(log)
+        except BaseException as err:
+            er.write(f"{err}\n{log}\n\n")
+        time.sleep(3)
+
+
