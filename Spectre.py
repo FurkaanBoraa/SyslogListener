@@ -58,9 +58,10 @@ def striptype(log):                     # Strip type in log (filterlog[45684], d
     striplog = re.sub(LOGTYPES,"", log)
     return striplog
 
-def dhcpparser(log):
+def dhcpparser(log, date_time):
     ip = re.search(IP, log)
     mac = re.search(MAC, log)
+    dhcpentry = f"{ip.group()} - {mac.group()} - {date_time}\n"
     #host = re.match(HOSTNAME, log)
     return {"ip": ip.group(),
             "mac" : mac.group()
@@ -113,7 +114,7 @@ def logger(log):                        # Goes through all functions for each lo
     log = logremovenumbers(log)
     log = lowercase(log)
     typeoflog = logtype(log)
-    print(typeoflog)
+    print(typeoflog, log)
     if typeoflog is not None:
         date_time = formatdate(log)
         log = stripdate(log)
@@ -122,7 +123,7 @@ def logger(log):                        # Goes through all functions for each lo
         #     log = filterparser(log)         
         #     print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
         if typeoflog == "dhcpack":   
-            log = dhcpparser(log)         
+            log = dhcpparser(log, date_time)         
             print(f"log type: {typeoflog}, date: {date_time}, log: {log}")
         
     elif "nginx" not in log:
